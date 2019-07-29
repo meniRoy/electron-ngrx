@@ -5,5 +5,7 @@
     "@angular/common": "^8.1.2",
     "@angular/core": "^8.1.2",
     "@ngrx/store": "*"
-  }
+  },
+  "author": "meni roytenburd",
+  "license": "ISC"
 }
