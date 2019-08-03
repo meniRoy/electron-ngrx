@@ -9,8 +9,9 @@ export class WindowCommunicationService {
   remote;
 
   constructor(private router: Router) {
-    this.ipcRenderer = (window as any).require('electron').ipcRenderer;
-    this.remote = (window as any).require('electron').remote;
+    const electron = (window as any).require('electron');
+    this.ipcRenderer = electron.ipcRenderer;
+    this.remote = electron.remote;
   }
 
   listenToChild() {
@@ -28,7 +29,7 @@ export class WindowCommunicationService {
       map(this.stripData),
       withLatestFrom(this.getWindowRoute(), (data, url) => ({data, url})),
       filter(({url, data}) => url === data.url),
-      map(({data}) => data.payload)
+      map(({data}) => data.payload),
     );
   }
 
