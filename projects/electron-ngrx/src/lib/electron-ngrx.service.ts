@@ -12,7 +12,6 @@ export class ElectronNgrxService {
       this.windowCommunicationService.listenToRoute(),
       this.windowCommunicationService.listenToId())
       .subscribe((action: Action) => {
-        console.log(action);
         ngZone.run(() => this.store.dispatch(action));
       });
   }
