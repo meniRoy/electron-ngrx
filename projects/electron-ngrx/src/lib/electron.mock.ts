@@ -29,8 +29,8 @@ export const getElectronMock = () => {
       getCurrentWindow: () => ({
         getParentWindow: () => ({
           webContents: {
-            send: (evenName, data) => {
-              ipcRenderer.emit(evenName, null, data);
+            send: (eventName, data) => {
+              ipcRenderer.emit(eventName, null, data);
             }
           }
         })

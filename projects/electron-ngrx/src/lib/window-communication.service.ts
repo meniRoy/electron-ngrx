@@ -29,7 +29,7 @@ export class WindowCommunicationService {
       map(this.stripData),
       withLatestFrom(this.getWindowRoute(), (data, url) => ({data, url})),
       filter(({url, data}) => url === data.url),
-      map(({data}) => data.payload),
+      map(({data}) => data.payload)
     );
   }
 

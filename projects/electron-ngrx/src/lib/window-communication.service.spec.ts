@@ -33,7 +33,7 @@ describe('window communication service', () => {
     expect(subscriber).toHaveBeenCalledWith(data);
   });
 
-  it('should send to id', () => {
+  it('should send to window by id', () => {
     const service: WindowCommunicationService = TestBed.get(WindowCommunicationService);
     const subscriber = jasmine.createSpy();
     const data = 'data';
