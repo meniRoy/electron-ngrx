@@ -1,4 +1,5 @@
 # ElectronNgrx
+[![Build Status](https://travis-ci.com/meniRoy/electron-ngrx.svg?branch=master)](https://travis-ci.com/meniRoy/electron-ngrx)
 
 **ElectronNgrx** is a library for dispatching NGRX actions between different Electron windows on a multi-window Electron Apps.
 
