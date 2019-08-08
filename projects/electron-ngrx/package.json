@@ -11,5 +11,6 @@
     "electron-mock-ipc": "^0.1.3"
   },
   "author": "meni roytenburd",
+  "repository": "https://github.com/meniRoy/electron-ngrx",
   "license": "ISC"
 }

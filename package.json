@@ -51,5 +51,6 @@
     "typescript": "~3.4.3"
   },
   "author": "meni roytenburd",
+  "repository": "https://github.com/meniRoy/electron-ngrx",
   "license": "ISC"
 }
