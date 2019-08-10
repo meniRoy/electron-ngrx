@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "node index.js",
     "test": "ng test",
     "test:coveralls": "ng test --watch false --progress false --browsers ChromeHeadless --code-coverage && cat ./coverage/electron-ngrx/lcov.info | coveralls",
     "lint": "ng lint",
