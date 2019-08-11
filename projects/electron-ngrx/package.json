@@ -1,6 +1,6 @@
 {
   "name": "electron-ngrx",
-  "version": "0.0.1",
+  "version": "0.0.0-semantically-released",
   "peerDependencies": {
     "@angular/common": "^8.1.2",
     "@angular/core": "^8.1.2",

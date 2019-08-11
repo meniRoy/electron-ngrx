@@ -10,3 +10,9 @@ script:
   - npm run lint
   - npm run test:coveralls
   - npm run build
+deploy:
+  on:
+    branch: master
+  provider: script
+  skip-cleanup: true
+  script: npm run travis-deploy-once "npm run semantic-release"
