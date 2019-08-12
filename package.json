@@ -12,7 +12,6 @@
     "lint:commit": "commitlint -e",
     "e2e": "ng e2e",
     "semantic-release": "semantic-release",
-    "commit": "git-cz",
     "travis-deploy-once": "travis-deploy-once --pro"
   },
   "private": true,
@@ -69,7 +68,6 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint",
       "commit-msg": "commitlint --edit"
     }
   },
@@ -77,7 +75,7 @@
   "license": "ISC",
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "cz-conventional-changelog"
     }
   },
   "release": {
