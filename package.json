@@ -81,6 +81,6 @@
     }
   },
   "release": {
-    "pkgRoot": "dist/angular-exemplify"
+    "pkgRoot": "dist/electron-ngrx"
   }
 }
