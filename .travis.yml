@@ -15,4 +15,4 @@ deploy:
     branch: master
   provider: script
   skip-cleanup: true
-  script: npm run travis-deploy-once "npm run semantic-release"
+  script: npm run semantic-release
