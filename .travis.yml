@@ -8,7 +8,7 @@ branches:
     - master
 script:
   - npm run lint
-  - npm run test:coveralls
+  - npm run test
   - npm run build
 deploy:
   on:
