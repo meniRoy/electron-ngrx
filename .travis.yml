@@ -8,5 +8,11 @@ branches:
     - master
 script:
   - npm run lint
-  - npm run test:coveralls
+  - npm run test:codecov
   - npm run build
+deploy:
+  on:
+    branch: master
+  provider: script
+  skip-cleanup: true
+  script: npm run semantic-release

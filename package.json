@@ -1,14 +1,18 @@
 {
   "name": "electron-ngrx",
-  "version": "0.0.0",
+  "version": "0.0.0-development",
+  "author": "meni roytenburd",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "test:coveralls": "ng test --watch false --progress false --browsers ChromeHeadless --code-coverage && cat ./coverage/electron-ngrx/lcov.info | coveralls",
+    "test:codecov": "ng test --watch false --progress false --browsers ChromeHeadless --code-coverage && cat ./coverage/electron-ngrx/lcov.info | codecov --pipe",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "lint:commit": "commitlint -e",
+    "e2e": "ng e2e",
+    "semantic-release": "semantic-release",
+    "travis-deploy-once": "travis-deploy-once --pro"
   },
   "private": true,
   "dependencies": {
@@ -32,11 +36,15 @@
     "@angular/cli": "~8.1.2",
     "@angular/compiler-cli": "~8.1.2",
     "@angular/language-service": "~8.1.2",
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-conventional": "^8.1.0",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
+    "codecov": "^3.5.0",
     "codelyzer": "^5.0.0",
-    "coveralls": "^3.0.6",
+    "cz-conventional-changelog": "^3.0.2",
+    "husky": "^3.0.3",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",
@@ -46,12 +54,31 @@
     "karma-jasmine-html-reporter": "^1.4.0",
     "ng-packagr": "^5.1.0",
     "protractor": "~5.4.0",
+    "semantic-release": "^15.13.19",
+    "travis-deploy-once": "^5.0.11",
     "ts-node": "~7.0.0",
     "tsickle": "^0.35.0",
     "tslint": "~5.15.0",
     "typescript": "~3.4.3"
   },
-  "author": "meni roytenburd",
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint --edit"
+    }
+  },
   "repository": "https://github.com/meniRoy/electron-ngrx",
-  "license": "ISC"
+  "license": "ISC",
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
+  "release": {
+    "pkgRoot": "dist/electron-ngrx"
+  }
 }
