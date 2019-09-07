@@ -119,21 +119,21 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills-test.ts",
-            "tsConfig": "src/tsconfig.spec.json",
-            "karmaConfig": "src/karma.conf.js",
+            "main": "projects/demo/src/test.ts",
+            "polyfills": "projects/demo/src/polyfills-test.ts",
+            "tsConfig": "projects/demo/tsconfig.spec.json",
+            "karmaConfig": "projects/demo/src/karma.conf.js",
             "scripts": [],
             "styles": [
-              "src/styles.scss"
+              "projects/demo/src/styles.scss"
             ],
             "assets": [
-              "src/assets",
-              "src/favicon.ico",
-              "src/favicon.png",
-              "src/favicon.icns",
-              "src/favicon.256x256.png",
-              "src/favicon.512x512.png"
+              "projects/demo/src/assets",
+              "projects/demo/src/favicon.ico",
+              "projects/demo/src/favicon.png",
+              "projects/demo/src/favicon.icns",
+              "projects/demo/src/favicon.256x256.png",
+              "projects/demo/src/favicon.512x512.png"
             ]
           }
         },

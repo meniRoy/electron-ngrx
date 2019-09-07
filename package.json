@@ -6,7 +6,7 @@
     "start": "demo:serve",
     "build": "ng build",
     "test": "ng test",
-    "test:codecov": "ng test --watch false --progress false --browsers ChromeHeadless --code-coverage && cat ./coverage/electron-ngrx/lcov.info | codecov --pipe",
+    "test:codecov": "ng test electron-ngrx --watch false --progress false --browsers ChromeHeadless --code-coverage && cat ./coverage/electron-ngrx/lcov.info | codecov --pipe",
     "lint": "ng lint",
     "lint:commit": "commitlint -e",
     "semantic-release": "semantic-release",
