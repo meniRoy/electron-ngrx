@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {WindowCommunicationService} from './window-communication.service';
-import {NavigationEnd, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import {defineEventEmitterToWindowId, getElectronMock} from './electron.mock';
 
@@ -52,7 +52,6 @@ describe('window communication service', () => {
       expect(data).toBe(mockData);
       done();
     });
-    routerEvents.next(new NavigationEnd(1, '/', ''));
     service.sendToRoute('/', mockData);
   });
 
