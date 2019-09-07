@@ -1,0 +1,14 @@
+<p>
+  data : {{massge|json}}
+</p>
+<button (click)="sendToParent()">decrement on parent</button>
+<br/>
+<label>route<input [(ngModel)]="routeToSend"></label>
+<br/>
+<button (click)="sendToRoute()">decrement on windows with route</button>
+<br/>
+<label>id<input [(ngModel)]="idToSend"></label>
+<br/>
+<button (click)="sendToId()">decrement on windows with id</button>
+<br/>
+<p>id:{{this.winId}}</p>
