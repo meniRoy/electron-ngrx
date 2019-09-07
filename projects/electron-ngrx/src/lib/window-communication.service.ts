@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {fromEvent, Observable} from 'rxjs';
-import {filter, map, startWith, withLatestFrom} from 'rxjs/operators';
+import {filter, map, withLatestFrom} from 'rxjs/operators';
 import {NavigationEnd, Router} from '@angular/router';
 
 @Injectable()
@@ -41,7 +41,6 @@ export class WindowCommunicationService {
     return this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
       map((e: NavigationEnd) => e.url),
-      startWith(this.router.url)
     );
   }
 
