@@ -3,7 +3,7 @@
   "version": "0.0.0-development",
   "author": "meni roytenburd",
   "scripts": {
-    "start": "demo:serve",
+    "start": "npm run demo:serve",
     "build": "npm run lib:build && npm run demo:build",
     "test": "ng test angular-electron --watch false && ng test electron-ngrx --watch false",
     "lint": "ng lint",

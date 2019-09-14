@@ -10,8 +10,8 @@ import {decrement} from '../counter/state/counter.actions';
 })
 export class IpcComponent implements OnInit {
   winId;
-  idToSend;
-  routeToSend;
+  distWinId;
+  distWinRoute;
 
   constructor(
     private electronNgrx: ElectronNgrxService,
@@ -27,10 +27,10 @@ export class IpcComponent implements OnInit {
   }
 
   sendToRoute() {
-    this.electronNgrx.dispatchToRoute(decrement(), this.routeToSend);
+    this.electronNgrx.dispatchToRoute(decrement(), this.distWinRoute);
   }
 
   sendToId() {
-    this.electronNgrx.dispatchToId(decrement(), this.idToSend);
+    this.electronNgrx.dispatchToId(decrement(), this.distWinId);
   }
 }
