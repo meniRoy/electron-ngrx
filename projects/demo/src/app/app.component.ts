@@ -8,14 +8,8 @@ import {ElectronService} from './providers/electron.service';
 })
 export class AppComponent {
   constructor(public electronService: ElectronService) {
-
-
-    if (electronService.isElectron()) {
       console.log('Mode electron');
       console.log('Electron ipcRenderer', electronService.ipcRenderer);
       console.log('NodeJS childProcess', electronService.childProcess);
-    } else {
-      console.log('Mode web');
-    }
   }
 }

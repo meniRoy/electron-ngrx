@@ -1,18 +1,20 @@
-import {Component} from '@angular/core';
-import {Store, select, createFeatureSelector} from '@ngrx/store';
+import {Component, OnInit} from '@angular/core';
+import {select, Store} from '@ngrx/store';
 import {Observable} from 'rxjs';
-import {increment, decrement, reset} from './state/counter.actions';
+import {decrement, increment, reset} from './state/counter.actions';
 
 @Component({
   selector: 'app-counter',
   templateUrl: './counter.component.html',
 })
-export class CounterComponent {
+export class CounterComponent implements OnInit {
   count$: Observable<number>;
 
   constructor(private store: Store<{ count: number }>) {
-    this.count$ = store.pipe(select('count'));
-    (window as any).a = createFeatureSelector('feature');
+  }
+
+  ngOnInit(): void {
+    this.count$ = this.store.pipe(select('count'));
   }
 
   increment() {

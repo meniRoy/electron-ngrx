@@ -29,7 +29,14 @@ import {ElectronNgrxModule} from 'electron-ngrx';
     FormsModule,
     HttpClientModule,
     AppRoutingModule,
-    StoreModule.forRoot({count: counterReducer})
+    StoreModule.forRoot({count: counterReducer}, {
+      runtimeChecks: {
+        strictStateImmutability: true,
+        strictActionImmutability: true,
+        strictStateSerializability: true,
+        strictActionSerializability: true,
+      },
+    })
   ],
   providers: [ElectronService],
   bootstrap: [AppComponent]

@@ -1,6 +1,8 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { MainWindowComponent } from './main-window.component';
+import {MainWindowComponent} from './main-window.component';
+import {FormsModule} from '@angular/forms';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core';
 
 describe('MainWindowComponent', () => {
   let component: MainWindowComponent;
@@ -8,9 +10,12 @@ describe('MainWindowComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ MainWindowComponent ]
+      imports: [FormsModule],
+      declarations: [MainWindowComponent],
+      schemas: [CUSTOM_ELEMENTS_SCHEMA]
+
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -15,11 +15,11 @@ export class ElectronService {
   fs: any;
 
   constructor() {
-    // Conditional imports
     if (this.isElectron()) {
-      this.ipcRenderer = window.require('electron').ipcRenderer;
-      this.webFrame = window.require('electron').webFrame;
-      this.remote = window.require('electron').remote;
+      const electron = window.require('electron');
+      this.ipcRenderer = electron.ipcRenderer;
+      this.webFrame = electron.webFrame;
+      this.remote = electron.remote;
 
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');

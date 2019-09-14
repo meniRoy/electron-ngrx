@@ -9,7 +9,6 @@ import {decrement} from '../counter/state/counter.actions';
   styleUrls: ['./ipc.component.scss']
 })
 export class IpcComponent implements OnInit {
-  massge = [];
   winId;
   idToSend;
   routeToSend;

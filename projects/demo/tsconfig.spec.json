@@ -6,11 +6,16 @@
     "types": [
       "jasmine",
       "node"
-    ]
+    ],
+    "paths": {
+      "electron-ngrx": [
+        "projects/electron-ngrx/src/public-api.ts"
+      ]
+    }
   },
   "files": [
     "src/test.ts",
-    "polyfills-test.ts"
+    "src/polyfills-test.ts"
   ],
   "include": [
     "**/*.spec.ts",

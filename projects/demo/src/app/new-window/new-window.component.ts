@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {ElectronService} from '../providers/electron.service';
 
 @Component({
@@ -6,12 +6,9 @@ import {ElectronService} from '../providers/electron.service';
   templateUrl: './new-window.component.html',
   styleUrls: ['./new-window.component.scss']
 })
-export class NewWindowComponent implements OnInit {
+export class NewWindowComponent {
 
   constructor(private electronService: ElectronService) {
-  }
-
-  ngOnInit() {
   }
 
   openWindow(route) {

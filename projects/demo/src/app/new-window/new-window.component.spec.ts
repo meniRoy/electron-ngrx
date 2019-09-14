@@ -1,6 +1,7 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { NewWindowComponent } from './new-window.component';
+import {NewWindowComponent} from './new-window.component';
+import {ElectronService} from '../providers/electron.service';
 
 describe('NewWindowComponent', () => {
   let component: NewWindowComponent;
@@ -8,9 +9,10 @@ describe('NewWindowComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NewWindowComponent ]
+      declarations: [NewWindowComponent],
+      providers: [ElectronService]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
