@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "types": [
+    ],
+    "paths": {
+      "electron-ngrx": [
+        "projects/electron-ngrx/src/public-api.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "**/*.spec.ts"
+  ]
+}

@@ -17,15 +17,7 @@
     "lib": [
       "es2018",
       "dom"
-    ],
-    "paths": {
-      "electron-ngrx": [
-        "dist/electron-ngrx"
-      ],
-      "electron-ngrx/*": [
-        "dist/electron-ngrx/*"
-      ]
-    }
+    ]
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

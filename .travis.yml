@@ -1,4 +1,4 @@
-sodu: false
+sudo: false
 
 language: node_js
 node_js:
@@ -8,7 +8,9 @@ branches:
     - master
 script:
   - npm run lint
-  - npm run test:codecov
+  - npm run lib:ci:test
+  - npm run demo:ci:test
+  - npm run codecov
   - npm run build
 deploy:
   on:
