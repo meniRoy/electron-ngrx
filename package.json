@@ -7,17 +7,19 @@
     "build": "npm run lib:build && npm run demo:build",
     "test": "ng test angular-electron --watch false && ng test electron-ngrx --watch false",
     "lint": "ng lint",
-    "test:codecov": "ng test electron-ngrx --watch false --progress false --browsers ChromeHeadless --code-coverage && cat ./coverage/electron-ngrx/lcov.info | codecov --pipe",
-    "lint:commit": "commitlint -e",
-    "semantic-release": "semantic-release",
     "lib:build": "ng build electron-ngrx",
     "lib:test": "ng test electron-ngrx",
+    "lib:ci:test": "ng test electron-ngrx --watch false --progress false --browsers ChromeHeadless --code-coverage",
     "demo:test": "ng test angular-electron",
+    "demo:ci:test": "ng test angular-electron --watch false --progress false --browsers ChromeHeadless --code-coverage",
     "demo:build": "ng build angular-electron",
     "demo:ng:serve": "ng serve angular-electron",
     "demo:electron:tsc": "tsc -p ./projects/demo/tsconfig-serve.json",
     "demo:electron:serve": "wait-on http-get://localhost:4200/ && npm run demo:electron:tsc && electron ./projects/demo/main.js --serve",
-    "demo:serve": "npm-run-all -p demo:ng:serve demo:electron:serve"
+    "demo:serve": "npm-run-all -p demo:ng:serve demo:electron:serve",
+    "lint:commit": "commitlint -e",
+    "semantic-release": "semantic-release",
+    "codecov": "cat ./coverage/electron-ngrx/lcov.info | codecov --pipe"
   },
   "private": true,
   "dependencies": {
