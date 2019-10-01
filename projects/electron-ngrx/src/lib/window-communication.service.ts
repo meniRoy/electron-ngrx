@@ -14,15 +14,11 @@ interface Message {
 
 @Injectable()
 export class WindowCommunicationService {
-  private static messagesCounter: number;
+  private static messagesCounter = 0;
   private ipcRenderer: typeof ipcRenderer;
   private remote: typeof remote;
   private readonly myId: number;
   private replay: Observable<any>;
-
-  static init() {
-    WindowCommunicationService.messagesCounter = 0;
-  }
 
   constructor(private router: Router) {
     const electron = (window as any).require('electron');
@@ -110,5 +106,3 @@ export class WindowCommunicationService {
       );
   }
 }
-
-WindowCommunicationService.init();
