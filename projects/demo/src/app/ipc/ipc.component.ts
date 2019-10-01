@@ -11,8 +11,8 @@ import {selectCounter} from '../counter/state/counter.reducer';
 })
 export class IpcComponent implements OnInit {
   winId;
-  distWinId;
-  distWinRoute;
+  destinationWindId;
+  destinationWindRoute;
 
   constructor(
     private electronNgrx: ElectronNgrxService,
@@ -28,11 +28,11 @@ export class IpcComponent implements OnInit {
   }
 
   sendToRoute() {
-    this.electronNgrx.dispatchToRoute(decrement(), this.distWinRoute);
+    this.electronNgrx.dispatchToRoute(decrement(), this.destinationWindRoute);
   }
 
   sendToId() {
-    this.electronNgrx.dispatchToId(decrement(), parseInt(this.distWinId, 10));
+    this.electronNgrx.dispatchToId(decrement(), parseInt(this.destinationWindId, 10));
   }
 
   selectFromParent() {

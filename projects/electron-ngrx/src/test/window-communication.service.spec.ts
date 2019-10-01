@@ -1,9 +1,9 @@
 import {TestBed} from '@angular/core/testing';
-import {chancels, WindowCommunicationService} from './window-communication.service';
+import {WindowCommunicationService} from '../lib/window-communication.service';
 import {NavigationEnd, Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import {defineEventEmitterToWindowId, getElectronMock} from './electron.mock';
-
+import {channel} from '../lib/communication-channels';
 
 describe('window communication service', () => {
   let electronMock;
@@ -28,9 +28,9 @@ describe('window communication service', () => {
     const subscriber = jasmine.createSpy();
     const data = 'data';
 
-    service.listenToChild().subscribe(subscriber);
+    service.listenToParentChannel().subscribe(subscriber);
     service.sendToParent(data);
-    expect(subscriber).toHaveBeenCalledWith({data, reply: jasmine.any(Function)});
+    expect(subscriber).toHaveBeenCalledWith({data, replay: jasmine.any(Function)});
   });
 
   it('should send to window by id', () => {
@@ -39,62 +39,63 @@ describe('window communication service', () => {
     const data = 'data';
     const windowId = 1;
     defineEventEmitterToWindowId(windowId, electronMock.ipcRenderer);
-    service.listenToId().subscribe(subscriber);
+    service.listenToIdChannel().subscribe(subscriber);
     service.sendToId(windowId, data);
-    expect(subscriber).toHaveBeenCalledWith({data, reply: jasmine.any(Function)});
+    expect(subscriber).toHaveBeenCalledWith({data, replay: jasmine.any(Function)});
   });
 
   it('should send to route', (done) => {
     const service: WindowCommunicationService = TestBed.get(WindowCommunicationService);
     const mockData = 'data';
 
-    service.listenToRoute().subscribe(({data}) => {
+    service.listenToRouteChannel().subscribe(({data}) => {
       expect(data).toBe(mockData);
       done();
     });
     routerEvents.next(new NavigationEnd(1, '/', ''));
     service.sendToRoute('/', mockData);
   });
-  describe('should send replay massage', () => {
+  describe('should send replay message', () => {
     const windowId = 1;
-    const massageId = 2;
-    const replyData = 'reply';
+    const messageId = 2;
+    const replayData = 'replay';
 
-    it('when id chanel emit massage', (done) => {
+    it('when id chanel emit message', (done) => {
       const service: WindowCommunicationService = TestBed.get(WindowCommunicationService);
       defineEventEmitterToWindowId(windowId, electronMock.ipcRenderer);
-      electronMock.ipcRenderer.once(chancels.replay, (event, data) => {
-        expect(data).toEqual({data: replyData, massageId});
+      electronMock.ipcRenderer.once(channel.replay, (event, data) => {
+        expect(data).toEqual({data: replayData, messageId});
         done();
       });
-      service.listenToId().subscribe((massage) => {
-        massage.reply(replyData);
+      service.listenToIdChannel().subscribe((message) => {
+        message.replay(replayData);
       });
-      electronMock.ipcRenderer.emit(chancels.id, [{}, {data: null, senderId: windowId, massageId}]);
+      electronMock.ipcRenderer.emit(channel.id, [{}, {data: null, senderId: windowId, messageId}]);
     });
 
-    it('when parent chanel emit massage', (done) => {
+    it('when parent chanel emit message', (done) => {
       const service: WindowCommunicationService = TestBed.get(WindowCommunicationService);
       defineEventEmitterToWindowId(windowId, electronMock.ipcRenderer);
-      electronMock.ipcRenderer.once(chancels.replay, (event, data) => {
-        expect(data).toEqual({data: replyData, massageId});
+      electronMock.ipcRenderer.once(channel.replay, (event, data) => {
+        expect(data).toEqual({data: replayData, messageId});
         done();
       });
-      service.listenToChild().subscribe((massage) => {
-        massage.reply(replyData);
+      service.listenToParentChannel().subscribe((message) => {
+        message.replay(replayData);
       });
-      electronMock.ipcRenderer.emit(chancels.parent, [{}, {data: null, senderId: windowId, massageId}]);
+      electronMock.ipcRenderer.emit(channel.parent, [{}, {data: null, senderId: windowId, messageId}]);
     });
 
   });
 
-  it('should return replay massage', (done) => {
+  it('should return replay message', (done) => {
     const service: WindowCommunicationService = TestBed.get(WindowCommunicationService);
     const windowId = 1;
     const replayData = 'replay';
     defineEventEmitterToWindowId(windowId, electronMock.ipcRenderer);
-    electronMock.ipcRenderer.once(chancels.id, (event, data) =>
-      setTimeout(() => electronMock.ipcRenderer.emit(chancels.replay, [{}, {data: replayData, massageId: data.massageId}]))
+    electronMock.ipcRenderer.once(channel.id, (event, data) => {
+        return setTimeout(() => electronMock.ipcRenderer.emit(channel.replay, [{}, {data: replayData, messageId: data.messageId}]));
+      }
     );
     service.sendToId(windowId, {}).subscribe((data) => {
       expect(data).toBe(replayData);

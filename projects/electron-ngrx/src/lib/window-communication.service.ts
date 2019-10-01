@@ -3,87 +3,87 @@ import {fromEvent, Observable} from 'rxjs';
 import {filter, map, pluck, share, take, withLatestFrom} from 'rxjs/operators';
 import {NavigationEnd, Router} from '@angular/router';
 import {ipcRenderer, remote} from 'electron';
+import {channel} from './communication-channels';
+import {MessageWithReplay} from '../models/message';
 
-interface WithSender {
+interface Message {
   data: any;
   senderId: number;
-  massageId: number;
-}
-
-export interface Massage<T> {
-  reply: (...arg: any) => void;
-  data: T;
-}
-
-export const enum chancels {
-  replay = 'replay',
-  route = 'route',
-  id = 'id',
-  parent = 'parent'
+  messageId: number;
 }
 
 @Injectable()
 export class WindowCommunicationService {
-  ipcRenderer: typeof ipcRenderer;
-  remote: typeof remote;
+  private static messagesCounter: number;
+  private ipcRenderer: typeof ipcRenderer;
+  private remote: typeof remote;
   private readonly myId: number;
-  private reply: Observable<any>;
+  private replay: Observable<any>;
+
+  static init() {
+    WindowCommunicationService.messagesCounter = 0;
+  }
 
   constructor(private router: Router) {
     const electron = (window as any).require('electron');
     this.ipcRenderer = electron.ipcRenderer;
     this.remote = electron.remote;
     this.myId = electron.remote.getCurrentWindow().id;
-    this.reply = fromEvent(this.ipcRenderer, chancels.replay).pipe(map(this.fromElectronMassage), share());
+    this.replay = fromEvent(this.ipcRenderer, channel.replay).pipe(map(this.extractDataFromEvent), share());
   }
 
-  listenToChild<T>(): Observable<Massage<T>> {
-    return this.listenIpcRenderer<T>(chancels.parent);
+  generateMessageId(): number {
+    return Number(this.myId + '' + WindowCommunicationService.messagesCounter++);
   }
 
-  listenToId<T>(): Observable<Massage<T>> {
-    return this.listenIpcRenderer<T>(chancels.id);
+  listenToParentChannel<T>(): Observable<MessageWithReplay<T>> {
+    return this.listenToIpcRenderer<T>(channel.parent);
   }
 
-  listenToRoute<T>(): Observable<{ data: T }> {
-    return fromEvent(this.remote.ipcMain, chancels.route).pipe(
-      map<any, { route: string, data: T }>(this.fromElectronMassage),
-      withLatestFrom(this.getWindowRoute(), (massage, myRoute) => ({massage, myRoute})),
-      filter(({myRoute, massage}) => myRoute === massage.route),
-      map(({massage}) => ({data: massage.data})),
+  listenToIdChannel<T>(): Observable<MessageWithReplay<T>> {
+    return this.listenToIpcRenderer<T>(channel.id);
+  }
+
+  listenToRouteChannel<T>(): Observable<{ data: T }> {
+    return fromEvent(this.remote.ipcMain, channel.route).pipe(
+      map<any, { route: string, data: T }>(this.extractDataFromEvent),
+      withLatestFrom(this.getWindowRoute(), (message, myRoute) => ({message, myRoute})),
+      filter(({myRoute, message}) => myRoute === message.route),
+      map(({message}) => ({data: message.data})),
     );
   }
 
 
   sendToRoute<T>(route: string, data: T): void {
-    this.ipcRenderer.send(chancels.route, {data, route});
+    this.ipcRenderer.send(channel.route, {data, route});
   }
 
   sendToParent<T, R>(data: T): Observable<R> {
-    const massageId = +new Date();
-    this.remote.getCurrentWindow().getParentWindow().webContents.send(chancels.parent, {
+    const messageId = this.generateMessageId();
+    this.remote.getCurrentWindow().getParentWindow().webContents.send(channel.parent, {
       data,
       senderId: this.myId,
-      massageId
+      messageId
     });
-    return this.getReplyByMassageId<R>(massageId);
+    return this.getReplayByMessageId<R>(messageId);
   }
 
 
-  sendToId<T, R>(id: number, data: T): Observable<R> {
-    const massageId = +new Date();
-    this.sendById(chancels.id, id, {data, senderId: this.myId, massageId});
-    return this.getReplyByMassageId<R>(massageId);
+  sendToId<T, R>(windowId: number, data: T): Observable<R> {
+    const messageId = this.generateMessageId();
+    this.sendToWindow(channel.id, windowId, {data, senderId: this.myId, messageId});
+    return this.getReplayByMessageId<R>(messageId);
   }
 
-  private fromElectronMassage<T>([event, data]: [Event, T]): T {
+  private extractDataFromEvent<T>([event, data]: [Event, T]): T {
     return data;
   }
 
-  private withReply<T>(massage: WithSender): Massage<T> {
+  private addReplayToMessage<T>(message: Message): MessageWithReplay<T> {
     return {
-      data: massage.data,
-      reply: (replyMassage: any) => this.sendById(chancels.replay, massage.senderId, {data: replyMassage, massageId: massage.massageId})
+      data: message.data,
+      replay: (replayMessage: any) =>
+        this.sendToWindow(channel.replay, message.senderId, {data: replayMessage, messageId: message.messageId})
     };
   }
 
@@ -94,19 +94,21 @@ export class WindowCommunicationService {
     );
   }
 
-  private getReplyByMassageId<T>(massageId): Observable<T> {
-    return this.reply.pipe(filter(massage => massage.massageId === massageId), pluck('data'), take(1));
+  private getReplayByMessageId<T>(messageId): Observable<T> {
+    return this.replay.pipe(filter(message => message.messageId === messageId), pluck('data'), take(1));
   }
 
-  private sendById(chanel: string, id: number, data): void {
+  private sendToWindow(chanel: string, id: number, data): void {
     this.remote.BrowserWindow.fromId(id).webContents.send(chanel, data);
   }
 
-  private listenIpcRenderer<T>(eventName: string): Observable<Massage<T>> {
+  private listenToIpcRenderer<T>(eventName: string): Observable<MessageWithReplay<T>> {
     return fromEvent(this.ipcRenderer, eventName)
       .pipe(
-        map<any, WithSender>(this.fromElectronMassage),
-        map((data) => this.withReply<T>(data))
+        map<any, Message>(this.extractDataFromEvent),
+        map((data) => this.addReplayToMessage<T>(data))
       );
   }
 }
+
+WindowCommunicationService.init();

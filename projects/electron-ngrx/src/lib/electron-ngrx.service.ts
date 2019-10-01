@@ -1,17 +1,18 @@
 import {ApplicationRef, Injectable, NgZone} from '@angular/core';
-import {Massage, WindowCommunicationService} from './window-communication.service';
-import {Action, Store} from '@ngrx/store';
+import {WindowCommunicationService} from './window-communication.service';
+import {Action, select, Store} from '@ngrx/store';
 import {merge, Observable} from 'rxjs';
 import {filter, finalize, map, mergeMap, share, take} from 'rxjs/operators';
-import {getHashFromSelector, getSelectorByHash} from './selector-manager';
+import {getSelectorHash, getSelectorByHash, selectorFunction} from './selector-manager';
+import {MessageWithReplay} from '../models/message';
 
-const enum ngrxCommend {
+const enum ngrxCommand {
   dispatch,
   select
 }
 
 interface EvaluationRequest {
-  commend: ngrxCommend;
+  command: ngrxCommand;
   payload: any;
 }
 
@@ -22,60 +23,60 @@ export class ElectronNgrxService {
     private ngZone: NgZone,
     private store: Store<any>,
     private windowCommunicationService: WindowCommunicationService) {
-    const myMassages = merge<Massage<EvaluationRequest>>(
-      this.windowCommunicationService.listenToChild(),
-      this.windowCommunicationService.listenToRoute(),
-      this.windowCommunicationService.listenToId()).pipe(share());
-    myMassages.pipe(
-      map(massage => massage.data),
-      filter(data => data.commend === ngrxCommend.dispatch),
+    const myMessages = merge<MessageWithReplay<EvaluationRequest>>(
+      this.windowCommunicationService.listenToParentChannel(),
+      this.windowCommunicationService.listenToRouteChannel(),
+      this.windowCommunicationService.listenToIdChannel()).pipe(share());
+    myMessages.pipe(
+      map(message => message.data),
+      filter(data => data.command === ngrxCommand.dispatch),
       map(data => data.payload))
       .subscribe((action: Action) => {
         ngZone.run(() => this.store.dispatch(action));
       });
-    myMassages.pipe(
-      filter(massage => massage.data.commend === ngrxCommend.select),
-      mergeMap(massage => {
-        const selector = getSelectorByHash(massage.data.payload);
-        return this.store.select(selector).pipe(
+    myMessages.pipe(
+      filter(message => message.data.command === ngrxCommand.select),
+      mergeMap(message => {
+        const selector = getSelectorByHash(message.data.payload);
+        return this.store.pipe(
+          select(selector),
           take(1),
-          map(storeData => ({storeData, replay: massage.reply}))
+          map(storeData => ({storeData, replay: message.replay}))
         );
       })
     ).subscribe(({storeData, replay}) => replay(storeData));
   }
 
   dispatchToParent(action: Action): void {
-    this.windowCommunicationService.sendToParent({commend: ngrxCommend.dispatch, payload: action});
+    this.windowCommunicationService.sendToParent({command: ngrxCommand.dispatch, payload: action});
   }
 
   dispatchToId(action: Action, id: number): void {
-    this.windowCommunicationService.sendToId<EvaluationRequest, void>(id, {commend: ngrxCommend.dispatch, payload: action});
+    this.windowCommunicationService.sendToId<EvaluationRequest, void>(id, {command: ngrxCommand.dispatch, payload: action});
   }
 
   dispatchToRoute(action: Action, route: string): void {
-    this.windowCommunicationService.sendToRoute(route, {commend: ngrxCommend.dispatch, payload: action});
+    this.windowCommunicationService.sendToRoute(route, {command: ngrxCommand.dispatch, payload: action});
   }
 
-  selectFromId<T>(id: number, selector: (...arg: any) => any, triggerCd = true): Observable<T> {
-    const hash = getHashFromSelector(selector);
-    return this.windowCommunicationService.sendToId<EvaluationRequest, T>(id, {
-      commend: ngrxCommend.select,
+  selectFromId<T>(id: number, selector: selectorFunction, triggerChangeDetection = true): Observable<T> {
+    return this.selectFromWindow<T>((data) => this.windowCommunicationService.sendToId(id, data), selector, triggerChangeDetection);
+  }
+
+  selectFromParent<T>(selector: selectorFunction, triggerChangeDetection = true): Observable<T> {
+    return this.selectFromWindow<T>(this.windowCommunicationService.sendToParent, selector, triggerChangeDetection);
+  }
+
+  private selectFromWindow<T>(communicationFunction: (data: EvaluationRequest) => Observable<T>,
+                              selector: selectorFunction,
+                              triggerChangeDetection: boolean) {
+    const hash = getSelectorHash(selector);
+    return communicationFunction({
+      command: ngrxCommand.select,
       payload: hash
     }).pipe(
       // because electron ipc run out of zone.
-      finalize(() => triggerCd && this.appRef.tick())
-    );
-  }
-
-  selectFromParent<T>(selector: (...arg: any) => any, triggerCd = true): Observable<T> {
-    const hash = getHashFromSelector(selector);
-    return this.windowCommunicationService.sendToParent<EvaluationRequest, T>({
-      commend: ngrxCommend.select,
-      payload: hash
-    }).pipe(
-      // because electron ipc run out of zone.
-      finalize(() => triggerCd && this.appRef.tick())
+      finalize(() => triggerChangeDetection && this.appRef.tick())
     );
   }
 }
