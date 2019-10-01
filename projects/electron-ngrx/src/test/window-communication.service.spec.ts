@@ -90,14 +90,15 @@ describe('window communication service', () => {
 
   it('should return replay message', (done) => {
     const service: WindowCommunicationService = TestBed.get(WindowCommunicationService);
-    const windowId = 1;
+    const distentionWindowId = 2;
     const replayData = 'replay';
-    defineEventEmitterToWindowId(windowId, electronMock.ipcRenderer);
+    electronMock.setWindowId(1);
+    defineEventEmitterToWindowId(distentionWindowId, electronMock.ipcRenderer);
     electronMock.ipcRenderer.once(channel.id, (event, data) => {
         return setTimeout(() => electronMock.ipcRenderer.emit(channel.replay, [{}, {data: replayData, messageId: data.messageId}]));
       }
     );
-    service.sendToId(windowId, {}).subscribe((data) => {
+    service.sendToId(distentionWindowId, {}).subscribe((data) => {
       expect(data).toBe(replayData);
       done();
     });
