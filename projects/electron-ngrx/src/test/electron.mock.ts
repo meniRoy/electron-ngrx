@@ -16,8 +16,11 @@ const getIpcAsEmitter = (): { ipcMain: EventEmitter; ipcRenderer: EventEmitter }
 
 export const getElectronMock = () => {
   const {ipcRenderer, ipcMain} = getIpcAsEmitter();
-
+  let mockWindowId = 0;
   return {
+    setWindowId(id: number) {
+      mockWindowId = id;
+    },
     ipcRenderer,
     remote: {
       ipcMain,
@@ -27,6 +30,9 @@ export const getElectronMock = () => {
         })
       },
       getCurrentWindow: () => ({
+        get id() {
+          return mockWindowId;
+        },
         getParentWindow: () => ({
           webContents: {
             send: (eventName, data) => {

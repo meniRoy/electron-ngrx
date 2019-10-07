@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ElectronService} from '../providers/electron.service';
 import {ElectronNgrxService} from 'electron-ngrx';
 import {decrement} from '../counter/state/counter.actions';
+import {selectCounter} from '../counter/state/counter.reducer';
 
 @Component({
   selector: 'app-ipc',
@@ -10,8 +11,8 @@ import {decrement} from '../counter/state/counter.actions';
 })
 export class IpcComponent implements OnInit {
   winId;
-  distWinId;
-  distWinRoute;
+  destinationWindId;
+  destinationWindRoute;
 
   constructor(
     private electronNgrx: ElectronNgrxService,
@@ -27,10 +28,18 @@ export class IpcComponent implements OnInit {
   }
 
   sendToRoute() {
-    this.electronNgrx.dispatchToRoute(decrement(), this.distWinRoute);
+    this.electronNgrx.dispatchToRoute(decrement(), this.destinationWindRoute);
   }
 
   sendToId() {
-    this.electronNgrx.dispatchToId(decrement(), this.distWinId);
+    this.electronNgrx.dispatchToId(decrement(), parseInt(this.destinationWindId, 10));
+  }
+
+  selectFromParent() {
+    this.electronNgrx.selectFromParent(selectCounter).subscribe(console.log);
+  }
+
+  selectFromId() {
+    this.electronNgrx.selectFromId(1, selectCounter).subscribe(console.log);
   }
 }
