@@ -1,11 +1,30 @@
-<button (click)="sendToParent()">decrement on parent</button>
-<br/>
-<label>route<input [(ngModel)]="destinationWindRoute"></label>
-<br/>
-<button (click)="sendToRoute()">decrement on windows with route</button>
-<br/>
-<label>id<input [(ngModel)]="destinationWindId"></label>
-<br/>
-<button (click)="sendToId()">decrement on windows with id</button>
-<br/>
-<p>id:{{this.winId}}</p>
+<div>
+  <div id="parent-actions">
+    <button class="parent-action" mat-flat-button color="warn" (click)="sendToParent('decrement')">decrement on parent
+    </button>
+    <button class='parent-action' mat-flat-button color="primary" (click)="sendToParent('increment')">increment on
+      parent
+    </button>
+  </div>
+  <div class='outer-actions'>
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Window Route" [(ngModel)]="destinationWindRoute">
+      <mat-hint>The window route we want to change</mat-hint>
+    </mat-form-field>
+    <div class="button-actions">
+      <button mat-flat-button color="warn" (click)="sendToRoute('decrement')">decrement on route</button>
+      <button mat-flat-button color="primary" (click)="sendToRoute('increment')">increment on route</button>
+    </div>
+  </div>
+  <div class="outer-actions">
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Window ID" [(ngModel)]="destinationWindId">
+      <mat-hint>The window ID we want to change</mat-hint>
+    </mat-form-field>
+    <div class="button-actions">
+      <button mat-flat-button color="warn" (click)="sendToId('decrement')">decrement on ID</button>
+      <button mat-flat-button color="primary" (click)="sendToId('increment')">increment on ID</button>
+    </div>
+  </div>
+  <p id="window-id">Window ID: {{this.winId}}</p>
+</div>

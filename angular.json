@@ -37,7 +37,6 @@
           }
         }
       }
-
     },
     "angular-electron": {
       "root": "projects/demo",
@@ -61,6 +60,7 @@
               "projects/demo/src/favicon.512x512.png"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/demo/src/styles.scss"
             ],
             "scripts": []
@@ -125,6 +125,7 @@
             "karmaConfig": "projects/demo/src/karma.conf.js",
             "scripts": [],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/demo/src/styles.scss"
             ],
             "assets": [

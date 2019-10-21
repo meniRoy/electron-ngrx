@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ElectronService} from '../providers/electron.service';
 import {ElectronNgrxService} from 'electron-ngrx';
-import {decrement} from '../counter/state/counter.actions';
+import {decrement, increment} from '../counter/state/counter.actions';
 import {selectCounter} from '../counter/state/counter.reducer';
 
 @Component({
@@ -23,16 +23,20 @@ export class IpcComponent implements OnInit {
     this.winId = this.electronService.remote.getCurrentWindow().id;
   }
 
-  sendToParent() {
-    this.electronNgrx.dispatchToParent(decrement());
+  sendToParent(action: string) {
+    action === 'increment' ? this.electronNgrx.dispatchToParent(increment()) : this.electronNgrx.dispatchToParent(decrement());
   }
 
-  sendToRoute() {
-    this.electronNgrx.dispatchToRoute(decrement(), this.destinationWindRoute);
+  sendToRoute(action: string) {
+    action === 'increment' ?
+      this.electronNgrx.dispatchToRoute(increment(), this.destinationWindRoute) :
+      this.electronNgrx.dispatchToRoute(decrement(), this.destinationWindRoute);
   }
 
-  sendToId() {
-    this.electronNgrx.dispatchToId(decrement(), parseInt(this.destinationWindId, 10));
+  sendToId(action: string) {
+    action === 'increment' ?
+      this.electronNgrx.dispatchToId(increment(), parseInt(this.destinationWindId, 10)) :
+      this.electronNgrx.dispatchToId(decrement(), parseInt(this.destinationWindId, 10));
   }
 
   selectFromParent() {
