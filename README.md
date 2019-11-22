@@ -5,27 +5,40 @@
 ![npm](https://img.shields.io/npm/v/electron-ngrx?style=flat-square)
 
 ## Motivation
-Most everyone who has worked with multiple Electron windows knows that it requires tons of repetitive coding. 
+Synchronizing multiple Electron windows to a single state or in some cases multiple states is a difficult task which results in complex management and repetitive code.
 
-The ones who tried to get to multiple windows to communicate a decent amount of information between them, then go and basically have to end up building a rest API.
-….No one wants that.
+Implementing such a communication solution for multiple windows that transfer a decent amount of data between them takes a lot of effort, especially if you have multiple states that are shared.
+Basically you will find yourself building a rest API.
 
 ### The solution
-ElectronNgrx offers an easy to use solution. It seamlessly dispatches actions and selects data from state's across multiple windows.
+ElectronNgrx offers an easy to use solution. It seamlessly dispatches actions and selects data from states across multiple windows.
 
 ##Usge:
-electronNgrx returns an Angular service with these functions
+ElectronNgrx delivers an Angular service with the following methods:
 
-`dispatchToParent` - Dispatch NGRX action to the window's parent.
+`dispatchToParent` - Dispatch NGRX action to the window parent.
 
-`dispatchToId` - Dispatch NGRX action to a specific Electron window by providing the destination window ID.
+`dispatchToId` - Dispatch NGRX action to a specific Electron window that matches the given id.
 
-`dispatchToRoute` - Dispatch NGRX action to all window’s on the specific route.
+`dispatchToRoute` - Dispatch NGRX action to all windows on the specific route.
 
-`selectFromId` - select data from the state of a different window with the window ID provided.  
+`selectFromId` - select data from the state of the window that matches the given id.  
 
 `selectFromParent` - select data from parent window state. 
 
+its simple as that:
+```typescript
+export class Component {
+ 
+  constructor(private electronNgrxService: ElectronNgrxService) {
+  }
+
+  increaseCounterOnParentWindow(increaseBy) {
+    this.electronNgrxService.dispatchToParent(incrementAction({paylaod: increaseBy}));
+  }
+}
+
+```
 
 ## Demo
 
