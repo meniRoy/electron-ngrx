@@ -26,7 +26,8 @@ ElectronNgrx delivers an Angular service with the following methods:
 
 `selectFromParent` - select data from parent window state. 
 
-its simple as that:
+## example
+for example if you want to increase counter on parent window state:
 ```typescript
 export class Component {
  
@@ -37,8 +38,8 @@ export class Component {
     this.electronNgrxService.dispatchToParent(incrementAction({paylaod: increaseBy}));
   }
 }
-
 ```
+ElectronNgrx will send the action to parent window and dispatch the action to the state and trigger the Angular change detection on the parent window. 
 
 ## Demo
 
@@ -54,3 +55,7 @@ npm install
 # Run the the demo
 npm start
 ```
+## change detection
+By default ngZone dont know about ipc electron.
+This can make some problem because massage that came from electron ipc will not trigger angular change detection.
+but ElectronNgrx take care of this problem by trigger angular change detection after any action that effect the window such as when dispatch action to the window state or when data came from another window state   
