@@ -64,7 +64,8 @@ export class ElectronNgrxService {
   }
 
   selectFromParent<T>(selector: selectorFunction, triggerChangeDetection = true): Observable<T> {
-    return this.selectFromWindow<T>(this.windowCommunicationService.sendToParent, selector, triggerChangeDetection);
+    return this.selectFromWindow<T>(
+      (data: EvaluationRequest) => this.windowCommunicationService.sendToParent(data), selector, triggerChangeDetection);
   }
 
   private selectFromWindow<T>(communicationFunction: (data: EvaluationRequest) => Observable<T>,
@@ -75,7 +76,7 @@ export class ElectronNgrxService {
       command: ngrxCommand.select,
       payload: hash
     }).pipe(
-      // because electron ipc run out of zone.
+      // because electron dispatch run out of zone.
       finalize(() => triggerChangeDetection && this.appRef.tick())
     );
   }

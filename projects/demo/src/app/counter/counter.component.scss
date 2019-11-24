@@ -1,18 +1,9 @@
-@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto:500&display=swap&subset=latin-ext');
-
-#title {
-  position: relative;
-  left: 43%;
-  font-family: 'Raleway', sans-serif;
-}
-
 #counter {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
   button {
     margin: 0 2%
   }
 }
 
+.container {
+  margin-bottom: 3vh;
+}

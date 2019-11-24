@@ -1,18 +1,18 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {IpcComponent} from './ipc.component';
+import {DispatchComponent} from './dispatch.component';
 import {FormsModule} from '@angular/forms';
 import {ElectronService} from '../providers/electron.service';
 import {ElectronNgrxService} from 'electron-ngrx';
 
 describe('IpcComponent', () => {
-  let component: IpcComponent;
-  let fixture: ComponentFixture<IpcComponent>;
+  let component: DispatchComponent;
+  let fixture: ComponentFixture<DispatchComponent>;
   const mockWindId = 1;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [IpcComponent],
+      declarations: [DispatchComponent],
       imports: [FormsModule],
       providers: [
         {provide: ElectronService, useValue: {remote: {getCurrentWindow: () => ({id: mockWindId})}}},
@@ -23,7 +23,7 @@ describe('IpcComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(IpcComponent);
+    fixture = TestBed.createComponent(DispatchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

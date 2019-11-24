@@ -11,11 +11,16 @@
 }
 
 .outer-actions {
+  width: fit-content;
   display: flex;
   justify-content: center;
   margin-bottom: 5%;
 }
 
+.dispatch-container {
+  margin: 0 auto;
+  width: fit-content;
+}
 .button-actions {
   display: flex;
   height: 50%;
@@ -27,6 +32,4 @@
   }
 }
 
-#window-id {
-  font-family: 'Viga', sans-serif;
-}
+

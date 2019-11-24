@@ -15,11 +15,12 @@ export class NewWindowComponent {
     const BrowserWindow = this.electronService.remote.BrowserWindow;
     const newWin = new BrowserWindow({
       height: 800,
-      width: 600,
+      width: 650,
       webPreferences: {
         nodeIntegration: true,
       },
-      parent: this.electronService.remote.getCurrentWindow()
+      parent: this.electronService.remote.getCurrentWindow(),
+      resizable: false
     });
     newWin.loadURL(window.location.origin + route);
   }
