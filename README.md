@@ -26,10 +26,15 @@ ElectronNgrx delivers an Angular service with the following methods:
 
 `selectFromParent` - select data from parent window state. 
 
+## change detection
+By default NgZone isn't aware of the ipc electron.
+This may cause issues when messages from electron ipc are received and the change detection isn't triggered.
+ElectronNgrx takes care of this problem by triggering the Angular change detection after every action that affects the window such as dispatching an action received from another window or receiving data from another window's state.
+
 ## example
-for example if you want to increase counter on parent window state:
+Dispatch increment action to the parent window's state.
 ```typescript
-export class Component {
+export class ChildWindowComponent {
  
   constructor(private electronNgrxService: ElectronNgrxService) {
   }
@@ -39,8 +44,7 @@ export class Component {
   }
 }
 ```
-ElectronNgrx will send the action to parent window and dispatch the action to the state and trigger the Angular change detection on the parent window. 
-
+ElectronNgrx will dispatch the action to the parent window's state, assuring that the Angular change detection will be triggered on the parent window.
 ## Demo
 
 To clone and run the demo you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
@@ -55,7 +59,3 @@ npm install
 # Run the the demo
 npm start
 ```
-## change detection
-By default ngZone dont know about ipc electron.
-This can make some problem because massage that came from electron ipc will not trigger angular change detection.
-but ElectronNgrx take care of this problem by trigger angular change detection after any action that effect the window such as when dispatch action to the window state or when data came from another window state   
