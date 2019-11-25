@@ -76,7 +76,7 @@ export class ElectronNgrxService {
       command: ngrxCommand.select,
       payload: hash
     }).pipe(
-      // because electron dispatch run out of zone.
+      // because electron ipc run out of zone.
       finalize(() => triggerChangeDetection && this.appRef.tick())
     );
   }
