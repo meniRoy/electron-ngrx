@@ -6,5 +6,4 @@ import {Component} from '@angular/core';
   styleUrls: ['./main-window.component.scss']
 })
 export class MainWindowComponent {
-
 }

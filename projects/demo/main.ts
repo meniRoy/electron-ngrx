@@ -1,4 +1,4 @@
-import {app, BrowserWindow, screen} from 'electron';
+import {app, BrowserWindow} from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 
@@ -9,16 +9,13 @@ serve = args.some(val => val === '--serve');
 
 function createWindow() {
 
-  const size = screen.getPrimaryDisplay().workAreaSize;
-
   win = new BrowserWindow({
-    x: 0,
-    y: 0,
-    width: size.width,
-    height: size.height,
+    width: 650,
+    height: 800,
     webPreferences: {
       nodeIntegration: true,
     },
+    resizable: false
   });
 
   if (serve) {
