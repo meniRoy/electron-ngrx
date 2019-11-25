@@ -9,7 +9,6 @@ branches:
 script:
   - npm run lint
   - npm run lib:ci:test
-  - npm run demo:ci:test
   - npm run codecov
   - npm run build
 deploy:
