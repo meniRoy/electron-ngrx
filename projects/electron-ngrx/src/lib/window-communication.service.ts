@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
-import {fromEvent, Observable} from 'rxjs';
-import {filter, map, pluck, share, take, withLatestFrom} from 'rxjs/operators';
+import {fromEvent, Observable, Subject, Subscription} from 'rxjs';
+import {filter, first, map, pluck, share, shareReplay, switchMap, take, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {NavigationEnd, Router} from '@angular/router';
-import {ipcRenderer, remote} from 'electron';
+import {ipcRenderer, remote, BrowserWindow} from 'electron';
 import {channel} from './communication-channels';
 import {MessageWithReplay} from '../models/message';
+import {SubscriptionCommand} from './subscription-command';
 
 interface Message {
   data: any;
@@ -19,13 +20,17 @@ export class WindowCommunicationService {
   private remote: typeof remote;
   private readonly myId: number;
   private replay: Observable<any>;
+  private parentWindow: BrowserWindow;
+  subscription: Observable<{}>;
 
   constructor(private router: Router) {
     const electron = (window as any).require('electron');
     this.ipcRenderer = electron.ipcRenderer;
     this.remote = electron.remote;
     this.myId = electron.remote.getCurrentWindow().id;
+    this.parentWindow = this.remote.getCurrentWindow().getParentWindow();
     this.replay = fromEvent(this.ipcRenderer, channel.replay).pipe(map(this.extractDataFromEvent), share());
+    this.subscription = fromEvent(this.ipcRenderer, channel.subscription).pipe(map(this.extractDataFromEvent));
   }
 
   generateMessageId(): number {
@@ -56,7 +61,7 @@ export class WindowCommunicationService {
 
   sendToParent<T, R>(data: T): Observable<R> {
     const messageId = this.generateMessageId();
-    this.remote.getCurrentWindow().getParentWindow().webContents.send(channel.parent, {
+    this.parentWindow.webContents.send(channel.parent, {
       data,
       senderId: this.myId,
       messageId
@@ -69,6 +74,80 @@ export class WindowCommunicationService {
     const messageId = this.generateMessageId();
     this.sendToWindow(channel.id, windowId, {data, senderId: this.myId, messageId});
     return this.getReplayByMessageId<R>(messageId);
+  }
+
+  listenSubscriptionRequest<T>() {
+    return this.subscription.pipe(map((message: { data: T, messageId: number, senderId: number }) => ({
+      data: message.data,
+      response: (observable: Observable<any>) => {
+        const channelPrefix = channel.subscription + message.messageId;
+        const cleanup = new Subject();
+        this.onWindowClose(this.remote.BrowserWindow.fromId(message.senderId)).subscribe(cleanup);
+        this.observableToChanelSubscription(channelPrefix, cleanup, observable, message.senderId);
+        this.sendToWindow(channelPrefix, message.senderId, {type: SubscriptionCommand.listening});
+      }
+    })), share());
+  }
+
+  private observableToChanelSubscription(channelPrefix, cleanup, srcObservable: Observable<any>, windowId: number) {
+    let subscription: Subscription;
+    fromEvent(this.ipcRenderer, channelPrefix).pipe(map(this.extractDataFromEvent), takeUntil(cleanup))
+      .subscribe((command: { type: SubscriptionCommand }) => {
+        if (command.type === SubscriptionCommand.subscribe) {
+          subscription = srcObservable.pipe(takeUntil(cleanup)).subscribe(
+            (data) => this.sendToWindow(channelPrefix, windowId, {type: SubscriptionCommand.next, data}),
+            (error) => this.sendToWindow(channelPrefix, windowId, {type: SubscriptionCommand.error, data: error}),
+            () => this.sendToWindow(channelPrefix, windowId, {type: SubscriptionCommand.complete})
+          );
+        } else if (command.type === SubscriptionCommand.unsubscribe) {
+          subscription.unsubscribe();
+        }
+      });
+  }
+
+  subscribeToParent<T, R>(data: T): Observable<R> {
+    return this.subscribeToWindow<T, R>(this.parentWindow, data);
+  }
+
+  subscribeToWindowById<T, R>(id: number, data: T): Observable<R> {
+    return this.subscribeToWindow<T, R>(this.remote.BrowserWindow.fromId(id), data);
+  }
+
+  private subscribeToWindow<T, R>(window: BrowserWindow, data: T): Observable<R> {
+    const messageId = this.generateMessageId();
+    const channelPrefix = channel.subscription + messageId;
+    const waitForWindowToListen = this.waitForWindowToListen(window, channelPrefix);
+    window.webContents.send(channel.subscription, {data, messageId, senderId: this.myId});
+    return waitForWindowToListen.pipe(switchMap(this.chanelSubscriptionToObservable<R>(window, channelPrefix)), share());
+  }
+
+
+  private chanelSubscriptionToObservable<T>(window: Electron.BrowserWindow, channelPrefix): () => Observable<T> {
+    return () => new Observable((subscriber) => {
+      const cleanup = new Subject();
+      this.onWindowClose(window).pipe(takeUntil(cleanup)).subscribe(() => {
+        subscriber.complete();
+        cleanup.next();
+      });
+      fromEvent(this.ipcRenderer, channelPrefix)
+        .pipe(map(this.extractDataFromEvent), takeUntil(cleanup))
+        .subscribe((messageData: { type: SubscriptionCommand, data: any }) => {
+            if (messageData.type === SubscriptionCommand.complete) {
+              subscriber.complete();
+              cleanup.complete();
+            } else if (messageData.type === SubscriptionCommand.next) {
+              subscriber.next(messageData.data);
+            } else if (messageData.type === SubscriptionCommand.error) {
+              subscriber.error(messageData.data);
+            }
+          }
+        );
+      window.webContents.send(channelPrefix, {type: SubscriptionCommand.subscribe});
+      return () => {
+        window.webContents.send(channelPrefix, SubscriptionCommand.unsubscribe);
+        cleanup.next();
+      };
+    });
   }
 
   private extractDataFromEvent<T>([event, data]: [Event, T]): T {
@@ -104,5 +183,20 @@ export class WindowCommunicationService {
         map<any, Message>(this.extractDataFromEvent),
         map((data) => this.addReplayToMessage<T>(data))
       );
+  }
+
+  private onWindowClose(window: BrowserWindow): Observable<any> {
+    return fromEvent(window, 'closed').pipe(first());
+  }
+
+  private waitForWindowToListen(window: BrowserWindow, channelPrefix: string) {
+    const waitForWindowToListen = fromEvent(this.ipcRenderer, channelPrefix).pipe(
+      map(this.extractDataFromEvent),
+      filter((data: { type: string }) => data.type === 'listening'),
+      first(),
+      shareReplay()
+    );
+    waitForWindowToListen.subscribe();
+    return waitForWindowToListen;
   }
 }
