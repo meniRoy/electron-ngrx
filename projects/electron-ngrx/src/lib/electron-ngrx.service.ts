@@ -34,7 +34,7 @@ export class ElectronNgrxService {
       .subscribe((action: Action) => {
         ngZone.run(() => this.store.dispatch(action));
       });
-    this.windowCommunicationService.listenSubscriptionRequest<EvaluationRequest>().pipe(
+    this.windowCommunicationService.listenToSubscriptionRequest<EvaluationRequest>().pipe(
       filter(message => message.data.command === ngrxCommand.select),
     ).subscribe((message) => {
       const selector = getSelectorByHash(message.data.payload);
@@ -68,7 +68,7 @@ export class ElectronNgrxService {
   }
 
   private selectFromWindow<T>(communicationFunction: (data: EvaluationRequest) => Observable<T>,
-                              selector: selectorFunction) {
+                              selector: selectorFunction): Observable<T> {
     const hash = getSelectorHash(selector);
 
     const srcObservable = communicationFunction({

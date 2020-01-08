@@ -3,7 +3,7 @@ import {WindowCommunicationService} from '../lib/window-communication.service';
 import {NavigationEnd, Router} from '@angular/router';
 import {Subject} from 'rxjs';
 import {defineEventEmitterToWindowId, getElectronMock} from './electron.mock';
-import {channel} from '../lib/communication-channels';
+import {communicationChannel} from '../lib/communication-channels';
 
 describe('window communication service', () => {
   let electronMock;
@@ -63,27 +63,27 @@ describe('window communication service', () => {
     it('when id chanel emit message', (done) => {
       const service: WindowCommunicationService = TestBed.get(WindowCommunicationService);
       defineEventEmitterToWindowId(windowId, electronMock.ipcRenderer);
-      electronMock.ipcRenderer.once(channel.replay, (event, data) => {
+      electronMock.ipcRenderer.once(communicationChannel.replay, (event, data) => {
         expect(data).toEqual({data: replayData, messageId});
         done();
       });
       service.listenToIdChannel().subscribe((message) => {
         message.replay(replayData);
       });
-      electronMock.ipcRenderer.emit(channel.id, [{}, {data: null, senderId: windowId, messageId}]);
+      electronMock.ipcRenderer.emit(communicationChannel.id, [{}, {data: null, senderId: windowId, messageId}]);
     });
 
     it('when parent chanel emit message', (done) => {
       const service: WindowCommunicationService = TestBed.get(WindowCommunicationService);
       defineEventEmitterToWindowId(windowId, electronMock.ipcRenderer);
-      electronMock.ipcRenderer.once(channel.replay, (event, data) => {
+      electronMock.ipcRenderer.once(communicationChannel.replay, (event, data) => {
         expect(data).toEqual({data: replayData, messageId});
         done();
       });
       service.listenToParentChannel().subscribe((message) => {
         message.replay(replayData);
       });
-      electronMock.ipcRenderer.emit(channel.parent, [{}, {data: null, senderId: windowId, messageId}]);
+      electronMock.ipcRenderer.emit(communicationChannel.parent, [{}, {data: null, senderId: windowId, messageId}]);
     });
 
   });
@@ -94,8 +94,11 @@ describe('window communication service', () => {
     const replayData = 'replay';
     electronMock.setWindowId(1);
     defineEventEmitterToWindowId(distentionWindowId, electronMock.ipcRenderer);
-    electronMock.ipcRenderer.once(channel.id, (event, data) => {
-        return setTimeout(() => electronMock.ipcRenderer.emit(channel.replay, [{}, {data: replayData, messageId: data.messageId}]));
+    electronMock.ipcRenderer.once(communicationChannel.id, (event, data) => {
+      return setTimeout(() => electronMock.ipcRenderer.emit(communicationChannel.replay, [{}, {
+        data: replayData,
+        messageId: data.messageId
+      }]));
       }
     );
     service.sendToId(distentionWindowId, {}).subscribe((data) => {
