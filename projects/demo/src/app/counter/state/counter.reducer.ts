@@ -1,4 +1,4 @@
-import {createReducer, on} from '@ngrx/store';
+import {createReducer, createSelector, on} from '@ngrx/store';
 import {increment, decrement, reset} from './counter.actions';
 import {registerSelector} from 'electron-ngrx';
 
@@ -9,6 +9,8 @@ export const counterReducer = createReducer(initialState,
   on(decrement, state => state - 1),
   on(reset, () => 0),
 );
-
 export const selectCounter = (state) => state.count;
-registerSelector(selectCounter);
+registerSelector(selectCounter, '1');
+
+export const doubleCounter = createSelector(selectCounter, (count, props) => count * props.a);
+registerSelector(doubleCounter, '2');

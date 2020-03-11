@@ -11,9 +11,19 @@ const enum ngrxCommand {
   select
 }
 
+interface SelectorPayload {
+  hash: any;
+  props?: any;
+}
+
 interface EvaluationRequest {
   command: ngrxCommand;
   payload: any;
+}
+
+interface SelectorEvaluationRequest {
+  command: ngrxCommand;
+  payload: SelectorPayload;
 }
 
 @Injectable()
@@ -34,11 +44,11 @@ export class ElectronNgrxService {
       .subscribe((action: Action) => {
         ngZone.run(() => this.store.dispatch(action));
       });
-    this.windowCommunicationService.listenToSubscriptionRequest<EvaluationRequest>().pipe(
+    this.windowCommunicationService.listenToSubscriptionRequest<SelectorEvaluationRequest>().pipe(
       filter(message => message.data.command === ngrxCommand.select),
     ).subscribe((message) => {
-      const selector = getSelectorByHash(message.data.payload);
-      message.response(this.store.pipe(select(selector)));
+      const selector = getSelectorByHash(message.data.payload.hash);
+      message.response(this.store.pipe(select(selector, message.data.payload.props)));
     });
   }
 
@@ -47,7 +57,10 @@ export class ElectronNgrxService {
   }
 
   dispatchToId(action: Action, id: number): void {
-    this.windowCommunicationService.sendToId<EvaluationRequest, void>(id, {command: ngrxCommand.dispatch, payload: action});
+    this.windowCommunicationService.sendToId<EvaluationRequest, void>(id, {
+      command: ngrxCommand.dispatch,
+      payload: action
+    });
   }
 
   dispatchToRoute(action: Action, route: string): void {
@@ -61,19 +74,18 @@ export class ElectronNgrxService {
     );
   }
 
-  selectFromParent<T>(selector: selectorFunction): Observable<T> {
+  selectFromParent<T>(selector: selectorFunction, props?): Observable<T> {
     return this.selectFromWindow<T>(
       (data: EvaluationRequest) => this.windowCommunicationService.subscribeToParent(data),
-      selector);
+      selector, props);
   }
 
   private selectFromWindow<T>(communicationFunction: (data: EvaluationRequest) => Observable<T>,
-                              selector: selectorFunction): Observable<T> {
+                              selector: selectorFunction, props?): Observable<T> {
     const hash = getSelectorHash(selector);
-
     const srcObservable = communicationFunction({
       command: ngrxCommand.select,
-      payload: hash
+      payload: {hash, props}
     });
     const insideZone = new Observable<T>(subscriber => {
       const subscribe = srcObservable.subscribe(

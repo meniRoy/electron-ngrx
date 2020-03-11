@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {ElectronNgrxService} from 'electron-ngrx';
-import {selectCounter} from '../counter/state/counter.reducer';
+import {doubleCounter, selectCounter} from '../counter/state/counter.reducer';
 
 @Component({
   selector: 'app-select',
@@ -19,7 +19,7 @@ export class SelectComponent {
   }
 
   selectCounterFromParent() {
-    this.electronNgrxService.selectFromParent<number>(selectCounter).subscribe(data => this.counter = data);
+    this.electronNgrxService.selectFromParent<number>(doubleCounter, {a: 2}).subscribe(data => this.counter = data);
   }
 
 }
