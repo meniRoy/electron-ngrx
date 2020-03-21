@@ -158,7 +158,10 @@ export class WindowCommunicationService {
     return {
       data: message.data,
       replay: (replayMessage: any) =>
-        this.sendToWindow(communicationChannel.replay, message.senderId, {data: replayMessage, messageId: message.messageId})
+        this.sendToWindow(communicationChannel.replay, message.senderId, {
+          data: replayMessage,
+          messageId: message.messageId
+        })
     };
   }
 
@@ -174,7 +177,10 @@ export class WindowCommunicationService {
   }
 
   private sendToWindow(chanel: string, id: number, data): void {
-    this.remote.BrowserWindow.fromId(id).webContents.send(chanel, data);
+    const window: BrowserWindow = this.remote.BrowserWindow.fromId(id);
+    if (window) {
+      window.webContents.send(chanel, data);
+    }
   }
 
   private listenToIpcRenderer<T>(eventName: string): Observable<MessageWithReplay<T>> {
