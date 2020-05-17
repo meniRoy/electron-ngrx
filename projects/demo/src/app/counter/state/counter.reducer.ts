@@ -12,5 +12,8 @@ export const counterReducer = createReducer(initialState,
 export const selectCounter = (state) => state.count;
 registerSelector(selectCounter, '1');
 
-export const doubleCounter = createSelector(selectCounter, (count, props) => count * props.a);
+export const doubleCounter = createSelector(selectCounter, (count, props) => count * props.multiplier);
 registerSelector(doubleCounter, '2');
+
+export const tripleCounter = createSelector(selectCounter, (count, props) => count * props.multiplier);
+registerSelector(tripleCounter, '3');

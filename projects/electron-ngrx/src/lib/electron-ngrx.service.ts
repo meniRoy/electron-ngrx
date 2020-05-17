@@ -67,10 +67,10 @@ export class ElectronNgrxService {
     this.windowCommunicationService.sendToRoute(route, {command: ngrxCommand.dispatch, payload: action});
   }
 
-  selectFromId<T>(id: number, selector: selectorFunction): Observable<T> {
+  selectFromId<T>(id: number, selector: selectorFunction, props?): Observable<T> {
     return this.selectFromWindow<T>(
       (data: EvaluationRequest) => this.windowCommunicationService.subscribeToWindowById(id, data),
-      selector,
+      selector, props
     );
   }
 
