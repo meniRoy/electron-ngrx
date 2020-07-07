@@ -56,7 +56,7 @@
     "codecov": "^3.5.0",
     "codelyzer": "^5.0.0",
     "cz-conventional-changelog": "^3.0.2",
-    "electron": "5.0.2",
+    "electron": "7.2.4",
     "electron-reload": "1.4.0",
     "husky": "^3.0.3",
     "jasmine-core": "~3.4.0",
