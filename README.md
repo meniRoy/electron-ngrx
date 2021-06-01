@@ -36,11 +36,11 @@ Dispatch increment action to the parent window's state.
 ```typescript
 export class ChildWindowComponent {
  
-  constructor(private electronNgrxService: ElectronNgrxService) {
+  constructor(private openfinNgrxService: OpenfinNgrxService) {
   }
 
   increaseCounterOnParentWindow(increaseBy) {
-    this.electronNgrxService.dispatchToParent(incrementAction({paylaod: increaseBy}));
+    this.openfinNgrxService.dispatchToParent(incrementAction({paylaod: increaseBy}));
   }
 }
 ```
@@ -51,9 +51,9 @@ To clone and run the demo you'll need [Git](https://git-scm.com) and [Node.js](h
 
 ```bash
 # Clone this repository
-git clone https://github.com/meniRoy/electron-ngrx.git
+git clone https://github.com/28StoneConsulting/openfin-ngrx.git
 # Go into the repository
-cd electron-ngrx
+cd openfin-ngrx
 # Install dependencies
 npm install
 # Run the the demo
