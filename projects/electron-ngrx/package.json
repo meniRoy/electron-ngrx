@@ -12,5 +12,8 @@
   },
   "author": "meni roytenburd",
   "repository": "https://github.com/meniRoy/electron-ngrx",
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "license": "ISC"
 }
