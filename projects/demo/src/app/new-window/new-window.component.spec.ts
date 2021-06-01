@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {NewWindowComponent} from './new-window.component';
 import {ElectronService} from '../providers/electron.service';
@@ -7,7 +7,7 @@ describe('NewWindowComponent', () => {
   let component: NewWindowComponent;
   let fixture: ComponentFixture<NewWindowComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [NewWindowComponent],
       providers: [ElectronService]

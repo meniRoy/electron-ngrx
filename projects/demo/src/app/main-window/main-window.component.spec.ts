@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {MainWindowComponent} from './main-window.component';
 import {FormsModule} from '@angular/forms';
@@ -8,7 +8,7 @@ describe('MainWindowComponent', () => {
   let component: MainWindowComponent;
   let fixture: ComponentFixture<MainWindowComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormsModule],
       declarations: [MainWindowComponent],
