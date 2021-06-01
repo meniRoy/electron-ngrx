@@ -1,9 +1,11 @@
-@import url('https://fonts.googleapis.com/css?family=Raleway|Roboto:500&display=swap&subset=latin-ext');
+@import url("https://fonts.googleapis.com/css?family=Raleway|Roboto:500&display=swap&subset=latin-ext");
 /* You can add global styles to this file, and also import other style files */
-html, body {
+html,
+body {
   margin: 0 0;
   padding: 0 0;
   height: 100%;
+  background-color: white;
 }
 
 body {
@@ -21,5 +23,5 @@ body {
 }
 
 h2 {
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
 }

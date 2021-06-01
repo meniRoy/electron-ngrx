@@ -10,10 +10,18 @@
       "prefix": "lib",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-ng-packagr:build",
+          "builder": "@angular-builders/custom-webpack:build",
           "options": {
             "tsConfig": "projects/electron-ngrx/tsconfig.lib.json",
-            "project": "projects/electron-ngrx/ng-package.json"
+            "project": "projects/electron-ngrx/ng-package.json",
+            "customWebpackConfig": {
+              "path": "./angular.webpack.js"
+            }
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/electron-ngrx/tsconfig.lib.prod.json"
+            }
           }
         },
         "test": {
@@ -31,9 +39,7 @@
               "projects/electron-ngrx/tsconfig.lib.json",
               "projects/electron-ngrx/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         }
       }
@@ -44,13 +50,17 @@
       "sourceRoot": "projects/demo/src",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/demo",
             "index": "projects/demo/src/index.html",
             "main": "projects/demo/src/main.ts",
             "tsConfig": "projects/demo/tsconfig.app.json",
             "polyfills": "projects/demo/src/polyfills.ts",
+            "customWebpackConfig": {
+              "path": "./angular.webpack.js"
+            },
             "assets": [
               "projects/demo/src/assets",
               "projects/demo/src/favicon.ico",
@@ -67,6 +77,12 @@
           },
           "configurations": {
             "dev": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": false,
               "outputHashing": "all",
               "sourceMap": true,
@@ -84,6 +100,12 @@
               ]
             },
             "production": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
@@ -103,7 +125,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "browserTarget": "angular-electron:build"
           },
@@ -145,9 +167,7 @@
               "projects/demo/tsconfig.app.json",
               "projects/demo/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
+            "exclude": ["**/node_modules/**"]
           }
         },
         "extract-i18n": {

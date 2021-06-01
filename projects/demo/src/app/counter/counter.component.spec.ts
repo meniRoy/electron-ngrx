@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import {CounterComponent} from './counter.component';
 import {StoreModule} from '@ngrx/store';
@@ -7,7 +7,7 @@ describe('MyCounterComponent', () => {
   let component: CounterComponent;
   let fixture: ComponentFixture<CounterComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CounterComponent],
       imports: [StoreModule.forRoot({})]
